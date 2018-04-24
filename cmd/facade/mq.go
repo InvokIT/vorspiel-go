@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"cloud.google.com/go/pubsub"
-	googlemq "github.com/invokit/vorspiel-lib/google/mq"
-	"github.com/invokit/vorspiel-lib/mq"
+	"github.com/invokit/vorspiel-backend/pkg/gcp/gcpmq"
+	"github.com/invokit/vorspiel-backend/pkg/mq"
 	"google.golang.org/api/option"
 )
 
@@ -25,7 +25,7 @@ func BuildMq() (mq.Client, error) {
 		return nil, err
 	}
 
-	mqClient := googlemq.New(pubsubClient)
+	mqClient := gcpmq.New(pubsubClient)
 
 	return mqClient, nil
 }

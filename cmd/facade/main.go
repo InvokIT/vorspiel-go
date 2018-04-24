@@ -23,6 +23,12 @@ func main() {
 
 	router := BuildRouter()
 	mq, err := BuildMq()
+	defer func() {
+		if err := mq.Close(); err != nil {
+			logger.Printf("error when closing mq: %s", err)
+		}
+	}
+
 	if err != nil {
 		logger.Fatalf("error when building mq client: %s", err)
 	}
