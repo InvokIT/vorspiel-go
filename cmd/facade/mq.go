@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"cloud.google.com/go/pubsub"
-	"github.com/invokit/vorspiel-backend/pkg/gcp/gcpmq"
-	"github.com/invokit/vorspiel-backend/pkg/mq"
+	"github.com/invokit/vorspiel-go/pkg/gcp/gcpmq"
+	"github.com/invokit/vorspiel-go/pkg/mq"
 	"google.golang.org/api/option"
 )
 
