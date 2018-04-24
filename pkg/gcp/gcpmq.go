@@ -1,10 +1,10 @@
-package mq
+package gcpmq
 
 import (
 	"cloud.google.com/go/pubsub"
 	"fmt"
 	"github.com/invokit/go-util/debug"
-	"github.com/invokit/vorspiel-lib/mq"
+	"github.com/invokit/vorspiel-backend/pkg/mq"
 	"golang.org/x/net/context"
 	"github.com/rs/xid"
 	"log"
@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-var dbg = debug.NewLogger("github.com/invokit/vorspiel-lib/google/mq")
+var dbg = debug.NewLogger("github.com/invokit/vorspiel-backend/pkg/gcp/gcpmq")
 var logger = log.New(os.Stderr, "", log.LstdFlags | log.Llongfile)
 
 // Arguments:

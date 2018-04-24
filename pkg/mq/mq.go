@@ -29,7 +29,7 @@ type Topic interface {
 
 // Subscribers run in its own goroutine
 // if an error is not thrown the message is acknowledged
-type Subscriber func(msg Message) (err error)
+type Subscriber func(ctx context.Context, msg Message) (err error)
 
 type Message struct {
 	Data       []byte
