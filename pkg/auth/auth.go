@@ -2,6 +2,7 @@ package auth
 
 import (
   "errors"
+  "net/http"
   "fmt"
   "os"
   "log"
@@ -10,9 +11,22 @@ import (
   "github.com/gorilla/pat"
 )
 
+var PublicUrl string
+var TokenWriter func(token string, http.ResponseWriter)
+var TokenReader func(*http.Request) (token string)
+var UserToTokenConverter func(user *User) token string
+var TokenToUserConverter func(token string) *User
+
 var logger = log.New(os.Stderr, "", log.LstdFlags | log.Llongfile)
 
-func Init(publicUrl string) error {
+func SetupRouter(router *pat.Router) {
+  router.Get("/auth/{provider}/callback", authCallbackHandler)
+	router.Get("/logout/{provider}", logoutHandler)
+	router.Get("/auth/{provider}", authHandler)
+  router.Get("/me", meHandler)
+}
+
+func init() {
   providerBuilders := make([]providerBuilder, 0)
 
   providerBuilders = append(providerBuilders, buildSteamProvider)
@@ -31,14 +45,6 @@ func Init(publicUrl string) error {
   goth.UseProviders(...providers)
 }
 
-type User struct {
-
-}
-
-type UserSaver func(user User) error
-
-type UserLoader func(userId string) error
-
 type providerBuilder func(publicUrl string) (goth.Provider, error)
 
 func buildSteamProvider(publicUrl string) (goth.Provider, error) {
@@ -51,15 +57,6 @@ func buildSteamProvider(publicUrl string) (goth.Provider, error) {
 
   return provider, nil
 }
-
-func SetupRouter(router *pat.Router) {
-  router.Get("/auth/{provider}/callback", authCallbackHandler)
-	router.Get("/logout/{provider}", logoutHandler)
-	router.Get("/auth/{provider}", authHandler)
-  router.Get("/me", meHandler)
-}
-
-func Required()
 
 func authCallbackHandler(res http.ResponseWriter, req *http.Request) {
 	logger.Print("AuthCallbackHandler entered")
