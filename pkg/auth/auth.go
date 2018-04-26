@@ -6,27 +6,29 @@ import (
   "fmt"
   "os"
   "log"
+  "github.com/invokit/vorspiel-go/pkg/model"
   "github.com/markbates/goth"
   "github.com/markbates/goth/providers/steam"
   "github.com/gorilla/pat"
 )
 
 var PublicUrl string
-var TokenWriter func(token string, http.ResponseWriter)
+var TokenWriter func(token string, res http.ResponseWriter)
 var TokenReader func(*http.Request) (token string)
-var UserToTokenConverter func(user *User) token string
-var TokenToUserConverter func(token string) *User
+var UserToTokenConverter func(user model.User) token string
+var TokenToUserConverter func(token string) model.User
 
 var logger = log.New(os.Stderr, "", log.LstdFlags | log.Llongfile)
 
 func SetupRouter(router *pat.Router) {
+	initGoth()
   router.Get("/auth/{provider}/callback", authCallbackHandler)
 	router.Get("/logout/{provider}", logoutHandler)
 	router.Get("/auth/{provider}", authHandler)
   router.Get("/me", meHandler)
 }
 
-func init() {
+func initGoth() {
   providerBuilders := make([]providerBuilder, 0)
 
   providerBuilders = append(providerBuilders, buildSteamProvider)
@@ -45,9 +47,9 @@ func init() {
   goth.UseProviders(...providers)
 }
 
-type providerBuilder func(publicUrl string) (goth.Provider, error)
+type providerBuilder func(publicUrl string) (*goth.Provider, error)
 
-func buildSteamProvider(publicUrl string) (goth.Provider, error) {
+func buildSteamProvider(publicUrl string) (*goth.Provider, error) {
   steamKey, ok := os.LookupEnv("STEAM_KEY")
 	if !ok {
     return nil, errors.New("STEAM_KEY is not defined in the environment")
